@@ -9,7 +9,7 @@ Intended to be flexible enough to support undetectable jailbreaks with randomize
 
 Jailbreaks supporting rootless V2 are supposed to ship a package in their jailbreak that contains the `<JB_ROOT>/usr/lib/libroot.dylib` file.
 This library is supposed to implement all of the following methods, which will be used by third party packages that access files.
-If this file does exists, `libroot_dyn.a` will use a fallback implementation that uses `/` as the root path, `/var/jb` as the jailbreak root path on XinaA15 1.x and iphoneos-arm64 packages and `/` as the jailbreak root path in iphoneos-arm packages.
+If this file does not exist, `libroot_dyn.a` will use a fallback implementation that uses `/` as the root path, `/var/jb` as the jailbreak root path on XinaA15 1.x and iphoneos-arm64 packages and `/` as the jailbreak root path in iphoneos-arm packages.
 
 ```c
 const char *libroot_get_root_prefix(void);
