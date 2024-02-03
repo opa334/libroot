@@ -14,7 +14,7 @@ If this file does not exist, `libroot_dyn.a` will use a fallback implementation 
 ```c
 const char *libroot_get_root_prefix(void);
 ```
-This function should return a static buffer containing the prefix that the bootstrap of the jailbreak considers the rootfs, which is read-only and only contains the files shipped by the operating system. For most jailbreaks this will be "", the only exception is when a jailbreak uses something like scheme4 to make the bootstrap think it's in a different path. For example, RootHide uses `"/rootfs"` for this, as it's jailbreak considers that to correspond to the rootfs, so that `"/jbroot` can correspond to the jailbreak root.
+This function should return a static buffer containing the prefix that the bootstrap of the jailbreak considers the rootfs, which is read-only and only contains the files shipped by the operating system. For most jailbreaks this will be "", the only exception is when a jailbreak uses something like scheme4 to make the bootstrap think it's in a different path. For example, RootHide uses `"/rootfs"` for this, as it's bootstrap considers that to correspond to the rootfs, so that `"/jbroot` can correspond to the jailbreak root.
 
 
 ```c
