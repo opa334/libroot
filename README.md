@@ -33,13 +33,13 @@ This function should return a static buffer containing a per boot UUID that iden
 int libroot_convert_rootfs(const char *path, char *fullPathOut, size_t fullPathSize);
 ```
 This function is supposed to provide the logic for converting a path to be a rootfs path. Sample input: `"/sbin/launchd"`, sample output: `"/sbin/launchd"` (sample output, RootHide: `/rootfs/sbin/launchd`).
-Additionally it is supposed to provide logic for stripping the jbroot out of a jbroot path, if the path passed to it is inside that. Sample input: `/var/jb/Library/Application Support/CCSupport.bundle`, sample output: `/Library/Application Support/CCSupport.bundle`.
+Additionally it is supposed to provide logic for stripping the jbroot out of a jbroot path, if the path passed to it is inside that. Sample input: `/var/jb/Library/Application Support/CCSupport.bundle`, sample output: `/Library/Application Support/CCSupport.bundle`. Unless you need custom logic, it is recommended to copy the implementation of Dopamine for this.
 
 
 ```c
 int libroot_convert_jbroot(const char *path, char *fullPathOut, size_t fullPathSize);
 ```
-This function is supposed to provide the logic for converting a path to be a rootfs path. Sample input: `"/Library/Application Support/CCSupport.bundle"`, sample output: `"/var/jb/Library/Application Support/CCSupport.bundle"`.
+This function is supposed to provide the logic for converting a path to be a rootfs path. Sample input: `"/Library/Application Support/CCSupport.bundle"`, sample output: `"/var/jb/Library/Application Support/CCSupport.bundle"`. Unless you need custom logic, it is recommended to copy the implementation of Dopamine for this.
 
 ## How to use
 
