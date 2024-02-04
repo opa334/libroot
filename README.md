@@ -48,15 +48,17 @@ This header contains 3 macros to make it easy to interact with libroot:
 
 
 ```c
-JBROOT_PATH(path)
+JBROOT_PATH_CSTRING(path)
+JBROOT_PATH_NSSTRING(path)
 ```
-This macro can be used to convert a path to the jailbreak root.
+These macros can be used to convert a path to the jailbreak root.
 
 
 ```c
-ROOTFS_PATH(path)
+ROOTFS_PATH_CSTRING(path)
+ROOTFS_PATH_NSSTRING(path)
 ```
-This macro can be used to convert a path to what the bootstrap considers the rootfs (NOTE: This is only rarely neccessary if you need to interact with bootstrap binaries, for example if you want to make the bootstrap's `cp` binary copy a file from the rootfs to the jbroot, you would do so as follows: `JBROOT_PATH("/bin/sh") ROOTFS_PATH("/sbin/launchd") JBROOT_PATH("/sbin/launchd")`). If you want to access a file on the rootfs from the context of your own process, you do NOT want to use this macro. This macro can also be used to convert a jbroot path to a normal path (As explained under `libroot_convert_rootfs`).
+These macros can be used to convert a path to what the bootstrap considers the rootfs (NOTE: This is only rarely neccessary if you need to interact with bootstrap binaries, for example if you want to make the bootstrap's `cp` binary copy a file from the rootfs to the jbroot, you would do so as follows: `JBROOT_PATH("/bin/sh") ROOTFS_PATH("/sbin/launchd") JBROOT_PATH("/sbin/launchd")`). If you want to access a file on the rootfs from the context of your own process, you do NOT want to use this macro. This macro can also be used to convert a jbroot path to a normal path (As explained under `libroot_convert_rootfs`).
 
 
 ```c
