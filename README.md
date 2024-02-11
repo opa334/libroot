@@ -1,7 +1,7 @@
 # libroot
 
 Library for dynamically obtaining the jailbreak-root and rootfs paths and converting paths around.
-Part of "Rootless v2", an API that allows third party packages to run on any jailbreak, no matter where the jailbreaks bootstrapped is installed to.
+Part of "Rootless v2", an API that allows third party packages to run on any jailbreak, no matter where the jailbreaks bootstrap is installed to.
 Designed to be backwards compatible with all jailbreaks, even those that have not adopted the API.
 Intended to be flexible enough to support undetectable jailbreaks with randomized paths, while providing a compatibility layer on other jailbreaks to avoid community fragmentation of third party packages (Like what was seen with "`iphoneos-arm64e`").
 
