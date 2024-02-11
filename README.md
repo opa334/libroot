@@ -11,7 +11,7 @@ Intended to be flexible enough to support undetectable jailbreaks with randomize
 
 Jailbreaks supporting rootless V2 are supposed to ship a package in their jailbreak that contains the `<JB_ROOT>/usr/lib/libroot.dylib` file.
 This library can implement the following functions, which will be used by third party packages that access files.
-If this library does not exist, `libroot_dyn.a` will use a fallback implementation that returns the following paths:
+If this library does not exist, `libroot_dyn.a` will use a fallback implementation that will make callers use the following paths:
 |               | iphoneos-arm64 | XinaA15 1.x    | iphoneos-arm   |
 | ------------- | -------------- | -------------- | -------------- |
 | rootfs        | `/`            | `/`            | `/`            |
