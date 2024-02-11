@@ -26,7 +26,7 @@ This function shall return a static buffer containing the prefix that the bootst
 ```c
 const char *libroot_get_jbroot_prefix(void);
 ```
-This function shall return a static buffer containing the prefix of the path where the bootstrap of the jailbreak is installed to, this path is read-write and contains all jailbreak related files. For most jailbreaks this will be "/var/jb" or what that points to, but if the jailbreak (like RootHide) wants to be undetectable, this needs to be a randomized path.
+This function shall return a static buffer containing the prefix of the path where the bootstrap of the jailbreak is installed to, this path is read-write and contains all jailbreak related files. For most jailbreaks this will be `"/var/jb"` or what that symlink points to, but if the jailbreak (like RootHide) wants to be undetectable, this needs to be a randomized path.
 
 
 ```c
