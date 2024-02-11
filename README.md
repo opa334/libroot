@@ -37,13 +37,13 @@ This function shall return a static buffer containing a per boot UUID that ident
 
 ### Custom path conversion logic
 
-The libroot_dyn static library already provides logic for converting a relative path to a rootfs or jbroot path. If your jailbreak wants to provide custom conversion logic though, it can do so by implementing the following two functions.
+The `libroot_dyn` static library already provides logic for converting a relative path to a rootfs or jbroot path. If your jailbreak wants to provide custom conversion logic though, it can do so by implementing the following two functions.
 
 ```c
 char *libroot_rootfspath(const char *path, char *resolvedPath);
 ```
 This function is supposed to provide the logic for converting a path to be a rootfs path. Sample input: `"/sbin/launchd"`, sample output: `"/sbin/launchd"` (sample output, RootHide: `/rootfs/sbin/launchd`).
-Additionally it is supposed to provide logic for stripping the jbroot out of a jbroot path, if the path passed to it is inside that. Sample input: `/var/jb/Library/Application Support/CCSupport.bundle`, sample output: `/Library/Application Support/CCSupport.bundle`. If `resolvedPath` is not NULL, it should be treated as a buffer of PATH_MAX characters and returned upon success, if it is NULL, the function is supposed to allocate a buffer of PATH_MAX bytes by itself. Unless you need custom logic, it is recommended to leave this function unimplemented.
+Additionally it is supposed to provide logic for stripping the jbroot prefix from a jbroot path, if the path passed to it is inside that. Sample input: `/var/jb/Library/Application Support/CCSupport.bundle`, sample output: `/Library/Application Support/CCSupport.bundle`. If `resolvedPath` is not NULL, it should be treated as a buffer of PATH_MAX characters and returned upon success, if it is NULL, the function is supposed to allocate a buffer of PATH_MAX bytes by itself. Unless you need custom logic, it is recommended to leave this function unimplemented.
 
 
 ```c
