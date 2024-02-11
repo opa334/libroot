@@ -68,12 +68,12 @@ These macros can be used to convert a path to the jailbreak root.
 ROOTFS_PATH_CSTRING(path)
 ROOTFS_PATH_NSSTRING(path)
 ```
-These macros can be used to convert a path to what the bootstrap considers the rootfs (NOTE: This is only rarely neccessary if you need to interact with bootstrap binaries, for example if you want to make the bootstrap's `cp` binary copy a file from the rootfs to the jbroot, you would do so as follows: `JBROOT_PATH("/bin/sh") ROOTFS_PATH("/sbin/launchd") JBROOT_PATH("/sbin/launchd")`). If you want to access a file on the rootfs from the context of your own process, you do NOT want to use this macro. This macro can also be used to convert a jbroot path to a normal path (As explained under `libroot_jbrootpath`).
+These macros can be used to convert a path to what the bootstrap considers the rootfs (NOTE: This is only rarely neccessary if you need to interact with bootstrap binaries, for example if you want to make the bootstrap's `cp` binary copy a file from the rootfs to the jbroot, you would do so as follows: `JBROOT_PATH("/bin/cp") ROOTFS_PATH("/sbin/launchd") JBROOT_PATH("/sbin/launchd")`). If you want to access a file on the rootfs from the context of your own process, you do NOT want to use this macro. This macro can also be used to convert a jbroot path to a normal path (As explained under `libroot_jbrootpath`).
 
 ```c
 JBRAND
 ```
-This macro is used to get a per userspace boot 37-char long UUID in the following format: `"00000000-0000-0000-0000-000000000000"`, the main use case for this to avoid jailbreak detection of tweaks. One example would be when working with distributed notifications, apps could listen for these to know when you're jailbroken, so you can prefix them with `JBRAND` on both the sender and the receivers end to avoid this, as apps cannot predit this UUID.
+This macro is used to get a per userspace boot 37-char long UUID in the following format: `"00000000-0000-0000-0000-000000000000"`, the main use case for this to avoid jailbreak detection of tweaks. One example would be when working with distributed notifications, apps could listen for these to know when you're jailbroken, so you can prefix them with `JBRAND` on both the sender and the receivers end to avoid this, as apps cannot predict this UUID.
 
 Additionally it is also possible to call 
 ```c
