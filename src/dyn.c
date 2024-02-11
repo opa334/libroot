@@ -2,27 +2,36 @@
 #include <stddef.h>
 #include <dispatch/dispatch.h>
 #include <dlfcn.h>
+#include <sys/param.h>
+#include <stdlib.h>
+#include "libroot.h"
+
+static const char *(*dyn_get_root_prefix)(void) = NULL;
+static const char *(*dyn_get_jbroot_prefix)(void) = NULL;
+static const char *(*dyn_get_boot_uuid)(void) = NULL;
+static char *(*dyn_jbrootpath)(const char *path, char *resolvedPath) = NULL;
+static char *(*dyn_rootfspath)(const char *path, char *resolvedPath) = NULL;
 
 #ifdef IPHONEOS_ARM64
 
-const char *libroot_fallback_get_root_prefix(void)
+const char *libroot_get_root_prefix_fallback(void)
 {
 	return "";
 }
 
-const char *libroot_fallback_get_jbroot_prefix(void)
+const char *libroot_get_jbroot_prefix_fallback(void)
 {
 	return "/var/jb";
 }
 
 #else
 
-const char *libroot_fallback_get_root_prefix(void)
+const char *libroot_get_root_prefix_fallback(void)
 {
 	return "";
 }
 
-const char *libroot_fallback_get_jbroot_prefix(void)
+const char *libroot_get_jbroot_prefix_fallback(void)
 {
 	if (access("/var/LIY", F_OK) == 0) {
 		// Legacy support for XinaA15 1.x (For those two people still using it)
@@ -37,32 +46,58 @@ const char *libroot_fallback_get_jbroot_prefix(void)
 
 #endif
 
-const char *libroot_fallback_get_boot_uuid(void)
+const char *libroot_get_boot_uuid_fallback(void)
 {
 	return "00000000-0000-0000-0000-000000000000";
 }
 
-int libroot_fallback_convert_rootfs(const char *path, char *fullPathOut, size_t fullPathSize)
+char *libroot_rootfspath_fallback(const char *path, char *resolvedPath)
 {
-	if (!fullPathOut || fullPathSize == 0) return -1;
-	strlcpy(fullPathOut, libroot_fallback_get_root_prefix(), fullPathSize);
-	strlcat(fullPathOut, path, fullPathSize);
-	return 0;
+	if (!path) return NULL;
+	if (!resolvedPath) resolvedPath = malloc(PATH_MAX);
+
+	const char *prefix = libroot_dyn_get_root_prefix();
+	const char *jbRootPrefix = libroot_dyn_get_jbroot_prefix();
+	size_t jbRootPrefixLen = strlen(jbRootPrefix);
+
+	if (path[0] == '/') {
+		// This function has two different purposes
+		// If what we have is a subpath of the jailbreak root, strip the jailbreak root prefix
+		// Else, add the rootfs prefix
+		if (!strncmp(path, jbRootPrefix, jbRootPrefixLen)) {
+			strlcpy(resolvedPath, &path[jbRootPrefixLen], PATH_MAX);
+		}
+		else {
+			strlcpy(resolvedPath, prefix, PATH_MAX);
+			strlcat(resolvedPath, path, PATH_MAX);
+		}
+	}
+	else {
+		// Don't modify relative paths
+		strlcpy(resolvedPath, path, PATH_MAX);
+	}
+
+	return resolvedPath;
 }
 
-int libroot_fallback_convert_jbroot(const char *path, char *fullPathOut, size_t fullPathSize)
+char *libroot_jbrootpath_fallback(const char *path, char *resolvedPath)
 {
-	if (!fullPathOut || fullPathSize == 0) return -1;
-	strlcpy(fullPathOut, libroot_fallback_get_jbroot_prefix(), fullPathSize);
-	strlcat(fullPathOut, path, fullPathSize);
-	return 0;
-}
+	if (!path) return NULL;
+	if (!resolvedPath) resolvedPath = malloc(PATH_MAX);
 
-static const char *(*dyn_get_root_prefix)(void);
-static const char *(*dyn_get_jbroot_prefix)(void);
-static const char *(*dyn_get_boot_uuid)(void);
-static int (*dyn_convert_rootfs)(const char *path, char *fullPathOut, size_t fullPathSize);
-static int (*dyn_convert_jbroot)(const char *path, char *fullPathOut, size_t fullPathSize);
+	const char *prefix = libroot_dyn_get_jbroot_prefix();
+
+	if (path[0] == '/') {
+		strlcpy(resolvedPath, prefix, PATH_MAX);
+		strlcat(resolvedPath, path, PATH_MAX);
+	}
+	else {
+		// Don't modify relative paths
+		strlcpy(resolvedPath, path, PATH_MAX);
+	}
+
+	return resolvedPath;
+}
 
 void libroot_load(void)
 {
@@ -73,16 +108,14 @@ void libroot_load(void)
 			dyn_get_root_prefix   = dlsym(handle, "libroot_get_root_prefix");
 			dyn_get_jbroot_prefix = dlsym(handle, "libroot_get_jbroot_prefix");
 			dyn_get_boot_uuid     = dlsym(handle, "libroot_get_boot_uuid");
-			dyn_convert_rootfs    = dlsym(handle, "libroot_convert_rootfs");
-			dyn_convert_jbroot    = dlsym(handle, "libroot_convert_jbroot");
+			dyn_jbrootpath        = dlsym(handle, "libroot_jbrootpath");
+			dyn_rootfspath        = dlsym(handle, "libroot_rootfspath");
 		}
-		else {
-			dyn_get_root_prefix   = libroot_fallback_get_root_prefix;
-			dyn_get_jbroot_prefix = libroot_fallback_get_jbroot_prefix;
-			dyn_get_boot_uuid     = libroot_fallback_get_boot_uuid;
-			dyn_convert_rootfs    = libroot_fallback_convert_rootfs;
-			dyn_convert_jbroot    = libroot_fallback_convert_jbroot;
-		}
+		if (!dyn_get_root_prefix)     dyn_get_root_prefix = libroot_get_root_prefix_fallback;
+		if (!dyn_get_jbroot_prefix) dyn_get_jbroot_prefix = libroot_get_jbroot_prefix_fallback;
+		if (!dyn_get_boot_uuid)         dyn_get_boot_uuid = libroot_get_boot_uuid_fallback;
+		if (!dyn_jbrootpath)               dyn_jbrootpath = libroot_jbrootpath_fallback;
+		if (!dyn_rootfspath)               dyn_rootfspath = libroot_rootfspath_fallback;
 	});
 }
 
@@ -104,14 +137,14 @@ const char *libroot_dyn_get_boot_uuid(void)
 	return dyn_get_boot_uuid();
 }
 
-int libroot_dyn_convert_rootfs(const char *path, char *fullPathOut, size_t fullPathSize)
+char *libroot_dyn_rootfspath(const char *path, char *resolvedPath)
 {
 	libroot_load();
-	return dyn_convert_rootfs(path, fullPathOut, fullPathSize);
+	return dyn_rootfspath(path, resolvedPath);
 }
 
-int libroot_dyn_convert_jbroot(const char *path, char *fullPathOut, size_t fullPathSize)
+char *libroot_dyn_jbrootpath(const char *path, char *resolvedPath)
 {
 	libroot_load();
-	return dyn_convert_jbroot(path, fullPathOut, fullPathSize);
+	return dyn_jbrootpath(path, resolvedPath);
 }
