@@ -32,7 +32,7 @@ This function shall return a static buffer containing the prefix of the path whe
 ```c
 const char *libroot_get_boot_uuid(void);
 ```
-This function shall return a static buffer containing a per boot UUID that identifies the current userspace boot. This UUID is expected to be 37 characters long, including the last byte being NULL. This merely exists for allowing third party packages to randomize certain tokens to avoid jailbreak detection. If your jailbreak is not supposed to be undetectable, you can return `"00000000-0000-0000-0000-000000000000"` here or avoid implementing it alltogether. A more detailed explanation can be found in the "How to Use" section.
+This function shall return a static buffer containing a per boot UUID that identifies the current userspace boot. This UUID is expected to be 37 characters long, including the last byte being NULL. This merely exists for allowing third party packages to randomize certain tokens to avoid jailbreak detection. If your jailbreak is not supposed to be undetectable, you can return `"00000000-0000-0000-0000-000000000000"` here or avoid implementing it alltogether. A more detailed explanation can be found in the "Using libroot in a project" section.
 
 
 ### Custom path conversion logic
