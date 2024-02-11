@@ -73,7 +73,7 @@ These macros can be used to convert a path to what the bootstrap considers the r
 ```c
 JBRAND
 ```
-This macro is used to get a per userspace boot 37-char long UUID in the following format: `"00000000-0000-0000-0000-000000000000"`, the main use case for this to avoid jailbreak detection of tweaks. One example would be when working with distributed notifications, apps could listen for these to know when you're jailbroken, so you can prefix them with JBRAND on both the sender and the receivers end to avoid this, as apps cannot predit this UUID.
+This macro is used to get a per userspace boot 37-char long UUID in the following format: `"00000000-0000-0000-0000-000000000000"`, the main use case for this to avoid jailbreak detection of tweaks. One example would be when working with distributed notifications, apps could listen for these to know when you're jailbroken, so you can prefix them with `JBRAND` on both the sender and the receivers end to avoid this, as apps cannot predit this UUID.
 
 Additionally it is also possible to call 
 ```c
