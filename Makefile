@@ -1,4 +1,6 @@
-CC = clang
+TOOLCHAIN_PREFIX ?= 
+CC = $(TOOLCHAIN_PREFIX)clang
+LIBTOOL = $(TOOLCHAIN_PREFIX)libtool
 
 SRC_FILES := $(wildcard src/*.c)
 
@@ -14,10 +16,10 @@ LDFLAGS =
 all: libroot_dyn_iphoneos-arm.a libroot_dyn_iphoneos-arm64.a
 
 libroot_dyn_iphoneos-arm.a: $(IPHONEOS_ARM_OBJ_FILES)
-	@libtool $^ -o $@
+	@$(LIBTOOL) $^ -o $@
 
 libroot_dyn_iphoneos-arm64.a: $(IPHONEOS_ARM64_OBJ_FILES)
-	@libtool $^ -o $@
+	@$(LIBTOOL) $^ -o $@
 
 $(IPHONEOS_ARM_BUILD_DIR)/%.o: src/%.c
 	@mkdir -p $(dir $@)
@@ -29,5 +31,6 @@ $(IPHONEOS_ARM64_BUILD_DIR)/%.o: src/%.c
 
 clean:
 	@rm -rf build
-	@rm -f libroot_dyn_iphoneos-arm.a
-	@rm -f libroot_dyn_iphoneos-arm64.a
+
+clean-artifacts: clean
+	@rm -f libroot_dyn_*.a
