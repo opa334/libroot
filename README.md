@@ -20,13 +20,13 @@ If this library does not exist, `libroot_dyn.a` will use a fallback implementati
 ```c
 const char *libroot_get_root_prefix(void);
 ```
-This function shall return a static buffer containing the prefix that the bootstrap of the jailbreak considers the rootfs, which is read-only and only contains the files shipped by the operating system. For most jailbreaks this will be `""`, the only exception is when a jailbreak uses something like scheme4 to make the bootstrap think it's in a different path. For example, RootHide uses `"/rootfs"` for this, as it's bootstrap considers that to correspond to the rootfs, so that `"/jbroot"` can correspond to the jailbreak root.
+This function shall return a static buffer containing the prefix that the bootstrap of the jailbreak considers the rootfs, which is read-only and only contains the files shipped by the operating system. For most jailbreaks this will be `""`, the only exception is when a jailbreak uses something like scheme4 to make the bootstrap think it's in a different path. For example, roothide uses `"/rootfs"` for this, as it's bootstrap considers that to correspond to the rootfs, so that `"/jbroot"` can correspond to the jailbreak root.
 
 
 ```c
 const char *libroot_get_jbroot_prefix(void);
 ```
-This function shall return a static buffer containing the prefix of the path where the bootstrap of the jailbreak is installed to, this path is read-write and contains all jailbreak related files. For most jailbreaks this will be `"/var/jb"` or what that symlink points to, but if the jailbreak (like RootHide) wants to be undetectable, this needs to be a randomized path.
+This function shall return a static buffer containing the prefix of the path where the bootstrap of the jailbreak is installed to, this path is read-write and contains all jailbreak related files. For most jailbreaks this will be `"/var/jb"` or what that symlink points to, but if the jailbreak (like roothide) wants to be undetectable, this needs to be a randomized path.
 
 
 ```c
@@ -42,7 +42,7 @@ The `libroot_dyn` static library already provides logic for converting a relativ
 ```c
 char *libroot_rootfspath(const char *path, char *resolvedPath);
 ```
-This function is supposed to provide the logic for converting a path to be a rootfs path. Sample input: `"/sbin/launchd"`, sample output: `"/sbin/launchd"` (sample output, RootHide: `/rootfs/sbin/launchd`).
+This function is supposed to provide the logic for converting a path to be a rootfs path. Sample input: `"/sbin/launchd"`, sample output: `"/sbin/launchd"` (sample output, roothide: `/rootfs/sbin/launchd`).
 Additionally it is supposed to provide logic for stripping the jbroot prefix from a jbroot path, if the path passed to it is inside that. Sample input: `/var/jb/Library/Application Support/CCSupport.bundle`, sample output: `/Library/Application Support/CCSupport.bundle`. If `resolvedPath` is not NULL, it should be treated as a buffer of `PATH_MAX` characters and returned upon success, if it is NULL, the function is supposed to allocate a buffer of `PATH_MAX` bytes by itself. Unless you need custom logic, it is recommended to leave this function unimplemented.
 
 
