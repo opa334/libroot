@@ -113,7 +113,7 @@ void libroot_load(void)
 {
 	static dispatch_once_t onceToken;
 	dispatch_once (&onceToken, ^{
-		void *handle = dlopen("@rpath/usr/lib/libroot.dylib", RTLD_NOW);
+		void *handle = dlopen("@rpath/libroot.dylib", RTLD_NOW);
 		if (handle) {
 			dyn_get_root_prefix   = dlsym(handle, "libroot_get_root_prefix");
 			dyn_get_jbroot_prefix = dlsym(handle, "libroot_get_jbroot_prefix");
