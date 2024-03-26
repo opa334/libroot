@@ -86,13 +86,23 @@ char *libroot_jbrootpath_fallback(const char *path, char *resolvedPath)
 	if (!resolvedPath) resolvedPath = malloc(PATH_MAX);
 
 	const char *prefix = libroot_dyn_get_jbroot_prefix();
+	bool skipRedirection = path[0] != '/'; // Don't redirect relative paths
 
-	if (path[0] == '/') {
+#ifndef IPHONEOS_ARM64
+	// Special case
+	// On XinaA15 v1: Don't redirect /var/mobile paths to /var/jb/var/mobile
+	if (!skipRedirection) {
+		if (access("/var/LIY", F_OK) == 0) {
+			skipRedirection = strncmp(path, "/var/mobile", 11) == 0;
+		}
+	}
+#endif
+
+	if (!skipRedirection) {
 		strlcpy(resolvedPath, prefix, PATH_MAX);
 		strlcat(resolvedPath, path, PATH_MAX);
 	}
 	else {
-		// Don't modify relative paths
 		strlcpy(resolvedPath, path, PATH_MAX);
 	}
 
