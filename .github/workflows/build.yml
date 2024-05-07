@@ -1,0 +1,84 @@
+name: Publish artifacts
+
+on:
+  - push
+  - workflow_dispatch
+
+jobs:
+  build-v0:
+    name: Build for arm64e unversioned ABI
+    permissions:
+      id-token: write
+      contents: read
+      attestations: write
+    runs-on: macos-11
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_11.7.app
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Build
+        run: |
+          make
+          # adjust names
+          mv libroot_dyn_iphoneos-arm.a libroot_oldabi.a
+          mv libroot_dyn_iphoneos-arm64.a rootless-libroot_oldabi.a
+          # archive so we can keep permissions
+          tar cvf libroot_oldabi.tar libroot_oldabi.a rootless-libroot_oldabi.a
+
+      - name: Attest default libroot
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: libroot_oldabi.a
+
+      - name: Attest rootless libroot
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: rootless-libroot_oldabi.a
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: libroot_oldabi
+          path: libroot_oldabi.tar
+          if-no-files-found: error
+
+  build-v1:
+    name: Build for arm64e v1 ABI
+    permissions:
+      id-token: write
+      contents: read
+      attestations: write
+    runs-on: macos-14
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_15.1.app
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Build
+        run: |
+          make
+          # adjust names
+          mv libroot_dyn_iphoneos-arm.a libroot.a
+          mv libroot_dyn_iphoneos-arm64.a rootless-libroot.a
+          # archive so we can keep permissions
+          tar cvf libroot.tar libroot.a rootless-libroot.a
+
+      - name: Attest default libroot
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: libroot.a
+
+      - name: Attest rootless libroot
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: rootless-libroot.a
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: libroot
+          path: libroot.tar
+          if-no-files-found: error

@@ -4,6 +4,7 @@
 #include <dlfcn.h>
 #include <sys/param.h>
 #include <stdlib.h>
+#include <string.h>
 #include "libroot.h"
 
 static const char *(*dyn_get_root_prefix)(void) = NULL;
