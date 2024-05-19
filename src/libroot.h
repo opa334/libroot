@@ -19,10 +19,9 @@ __END_DECLS
 #define ROOTFS_PATH_CSTRING(path) __CONVERT_PATH_CSTRING(libroot_dyn_rootfspath, path)
 
 #if __has_attribute(overloadable)
-// the C version needs to be inlined because we cannot re-use the static buffer
-__attribute__((__overloadable__, __always_inline__))
-static inline const char *_Nullable __libroot_convert_path(char *_Nullable (*_Nonnull converter)(const char *_Nonnull, char *_Nullable), const char *_Nullable path) {
-	return __CONVERT_PATH_CSTRING(converter, path);
+__attribute__((__overloadable__))
+static inline const char *_Nullable __libroot_convert_path(char *_Nullable (*_Nonnull converter)(const char *_Nonnull, char *_Nullable), const char *_Nullable path, char *_Nonnull buf) {
+	return converter(path, buf);
 }
 #endif /* __has_attribute(overloadable) */
 
@@ -39,7 +38,7 @@ static inline const char *_Nullable __libroot_convert_path(char *_Nullable (*_No
 
 #if __has_attribute(overloadable)
 __attribute__((__overloadable__))
-static inline NSString *_Nullable __libroot_convert_path(char *_Nullable (*_Nonnull converter)(const char *_Nonnull, char *_Nullable), NSString *_Nullable path) {
+static inline NSString *_Nullable __libroot_convert_path(char *_Nullable (*_Nonnull converter)(const char *_Nonnull, char *_Nullable), NSString *_Nullable path, void *_Nullable const __unused buf) {
 	return __CONVERT_PATH_NSSTRING(converter, path);
 }
 #endif /* __has_attribute(overloadable) */
@@ -47,8 +46,16 @@ static inline NSString *_Nullable __libroot_convert_path(char *_Nullable (*_Nonn
 #endif /* __OBJC__ */
 
 #if __has_attribute(overloadable)
-#	define JBROOT_PATH(path) __libroot_convert_path(libroot_dyn_jbrootpath, path)
-#	define ROOTFS_PATH(path) __libroot_convert_path(libroot_dyn_rootfspath, path)
+
+#define __BUFFER_FOR_CHAR_P(x) \
+	__builtin_choose_expr(										\
+		__builtin_types_compatible_p(__typeof__(*(x)), char),	\
+		({ static char buf[PATH_MAX]; buf; }),					\
+		NULL													\
+	)
+
+#	define JBROOT_PATH(path) __libroot_convert_path(libroot_dyn_jbrootpath, (path), __BUFFER_FOR_CHAR_P(path))
+#	define ROOTFS_PATH(path) __libroot_convert_path(libroot_dyn_rootfspath, (path), __BUFFER_FOR_CHAR_P(path))
 #else
 #	define JBROOT_PATH(path) _Pragma("GCC error \"JBROOT_PATH is not supported with this compiler, use JBROOT_PATH_CSTRING or JBROOT_PATH_NSSTRING\"") path
 #	define ROOTFS_PATH(path) _Pragma("GCC error \"ROOTFS_PATH is not supported with this compiler, use ROOTFS_PATH_CSTRING or ROOTFS_PATH_NSSTRING\"") path
