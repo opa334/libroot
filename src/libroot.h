@@ -27,6 +27,8 @@ static inline const char *_Nullable __libroot_convert_path(char *_Nullable (*_No
 
 #ifdef __OBJC__
 
+#import <Foundation/Foundation.h>
+
 #define __CONVERT_PATH_NSSTRING(converter, path) ({ \
 	char tmpBuf[PATH_MAX]; \
 	const char *converted = converter(path.fileSystemRepresentation, tmpBuf); \
