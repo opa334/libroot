@@ -21,7 +21,7 @@ __END_DECLS
 #if __has_attribute(overloadable)
 // the C version needs to be inlined because we cannot re-use the static buffer
 __attribute__((__overloadable__, __always_inline__))
-static inline const char *__libroot_convert_path(char *(*converter)(const char *, char *), const char *path) {
+static inline const char *_Nullable __libroot_convert_path(char *_Nullable (*_Nonnull converter)(const char *_Nonnull, char *_Nullable), const char *_Nullable path) {
 	return __CONVERT_PATH_CSTRING(converter, path);
 }
 #endif /* __has_attribute(overloadable) */
@@ -38,7 +38,7 @@ static inline const char *__libroot_convert_path(char *(*converter)(const char *
 
 #if __has_attribute(overloadable)
 __attribute__((__overloadable__))
-static inline NSString *const __libroot_convert_path(char *(*converter)(const char *, char *), NSString *path) {
+static inline NSString *_Nullable __libroot_convert_path(char *_Nullable (*_Nonnull converter)(const char *_Nonnull, char *_Nullable), NSString *_Nullable path) {
 	return __CONVERT_PATH_NSSTRING(converter, path);
 }
 #endif /* __has_attribute(overloadable) */
