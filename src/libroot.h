@@ -30,7 +30,8 @@ static inline const char *_Nullable __libroot_convert_path(char *_Nullable (*_No
 
 #define __CONVERT_PATH_NSSTRING(converter, path) ({ \
 	char tmpBuf[PATH_MAX]; \
-	[NSString stringWithUTF8String:converter(path.fileSystemRepresentation, tmpBuf)]; \
+	const char *converted = converter(path.fileSystemRepresentation, tmpBuf); \
+	converted ? [NSString stringWithUTF8String:converted] : nil; \
 })
 
 #define JBROOT_PATH_NSSTRING(path) __CONVERT_PATH_NSSTRING(libroot_dyn_jbrootpath, path)
