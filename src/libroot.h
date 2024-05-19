@@ -10,15 +10,6 @@ char *_Nullable libroot_dyn_jbrootpath(const char *_Nullable path, char *_Nullab
 
 __END_DECLS
 
-#if __has_attribute(overloadable)
-// the C version needs to be inlined because we cannot re-use the static buffer
-__attribute__((__overloadable__, __always_inline__))
-static inline const char *__libroot_convert_path(char *(*converter)(const char *, char *), const char *path) {
-	static char outPath[PATH_MAX];
-	return converter(path, outPath);
-}
-#endif /* __has_attribute(overloadable) */
-
 #define __CONVERT_PATH_CSTRING(converter, path) ({ \
 	static char outPath[PATH_MAX]; \
 	converter(path, outPath); \
@@ -27,15 +18,15 @@ static inline const char *__libroot_convert_path(char *(*converter)(const char *
 #define JBROOT_PATH_CSTRING(path) __CONVERT_PATH_CSTRING(libroot_dyn_jbrootpath, path)
 #define ROOTFS_PATH_CSTRING(path) __CONVERT_PATH_CSTRING(libroot_dyn_rootfspath, path)
 
-#ifdef __OBJC__
-
 #if __has_attribute(overloadable)
-__attribute__((__overloadable__))
-static inline NSString *const __libroot_convert_path(char *(*converter)(const char *, char *), NSString *path) {
-	char tmpBuf[PATH_MAX];
-	return [NSString stringWithUTF8String:converter(path.fileSystemRepresentation, tmpBuf)];
+// the C version needs to be inlined because we cannot re-use the static buffer
+__attribute__((__overloadable__, __always_inline__))
+static inline const char *__libroot_convert_path(char *(*converter)(const char *, char *), const char *path) {
+	return __CONVERT_PATH_CSTRING(converter, path);
 }
 #endif /* __has_attribute(overloadable) */
+
+#ifdef __OBJC__
 
 #define __CONVERT_PATH_NSSTRING(converter, path) ({ \
 	char tmpBuf[PATH_MAX]; \
@@ -44,6 +35,13 @@ static inline NSString *const __libroot_convert_path(char *(*converter)(const ch
 
 #define JBROOT_PATH_NSSTRING(path) __CONVERT_PATH_NSSTRING(libroot_dyn_jbrootpath, path)
 #define ROOTFS_PATH_NSSTRING(path) __CONVERT_PATH_NSSTRING(libroot_dyn_rootfspath, path)
+
+#if __has_attribute(overloadable)
+__attribute__((__overloadable__))
+static inline NSString *const __libroot_convert_path(char *(*converter)(const char *, char *), NSString *path) {
+	return __CONVERT_PATH_NSSTRING(converter, path);
+}
+#endif /* __has_attribute(overloadable) */
 
 #endif /* __OBJC__ */
 
