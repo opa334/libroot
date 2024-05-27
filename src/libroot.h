@@ -2,11 +2,15 @@
 
 __BEGIN_DECLS
 
+_Pragma("GCC visibility push(hidden)")
+
 const char *_Nonnull libroot_dyn_get_root_prefix(void);
 const char *_Nonnull libroot_dyn_get_jbroot_prefix(void);
 const char *_Nonnull libroot_dyn_get_boot_uuid(void);
 char *_Nullable libroot_dyn_rootfspath(const char *_Nullable path, char *_Nullable resolvedPath);
 char *_Nullable libroot_dyn_jbrootpath(const char *_Nullable path, char *_Nullable resolvedPath);
+
+_Pragma("GCC visibility pop")
 
 __END_DECLS
 

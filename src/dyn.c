@@ -15,24 +15,24 @@ static char *(*dyn_rootfspath)(const char *path, char *resolvedPath) = NULL;
 
 #ifdef IPHONEOS_ARM64
 
-const char *libroot_get_root_prefix_fallback(void)
+static const char *libroot_get_root_prefix_fallback(void)
 {
 	return "";
 }
 
-const char *libroot_get_jbroot_prefix_fallback(void)
+static const char *libroot_get_jbroot_prefix_fallback(void)
 {
 	return "/var/jb";
 }
 
 #else
 
-const char *libroot_get_root_prefix_fallback(void)
+static const char *libroot_get_root_prefix_fallback(void)
 {
 	return "";
 }
 
-const char *libroot_get_jbroot_prefix_fallback(void)
+static const char *libroot_get_jbroot_prefix_fallback(void)
 {
 	if (access("/var/LIY", F_OK) == 0) {
 		// Legacy support for XinaA15 1.x (For those two people still using it)
@@ -47,12 +47,12 @@ const char *libroot_get_jbroot_prefix_fallback(void)
 
 #endif
 
-const char *libroot_get_boot_uuid_fallback(void)
+static const char *libroot_get_boot_uuid_fallback(void)
 {
 	return "00000000-0000-0000-0000-000000000000";
 }
 
-char *libroot_rootfspath_fallback(const char *path, char *resolvedPath)
+static char *libroot_rootfspath_fallback(const char *path, char *resolvedPath)
 {
 	if (!path) return NULL;
 	if (!resolvedPath) resolvedPath = malloc(PATH_MAX);
@@ -81,7 +81,7 @@ char *libroot_rootfspath_fallback(const char *path, char *resolvedPath)
 	return resolvedPath;
 }
 
-char *libroot_jbrootpath_fallback(const char *path, char *resolvedPath)
+static char *libroot_jbrootpath_fallback(const char *path, char *resolvedPath)
 {
 	if (!path) return NULL;
 	if (!resolvedPath) resolvedPath = malloc(PATH_MAX);
@@ -110,7 +110,7 @@ char *libroot_jbrootpath_fallback(const char *path, char *resolvedPath)
 	return resolvedPath;
 }
 
-void libroot_load(void)
+static void libroot_load(void)
 {
 	static dispatch_once_t onceToken;
 	dispatch_once (&onceToken, ^{
